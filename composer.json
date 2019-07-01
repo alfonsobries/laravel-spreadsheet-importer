@@ -2,7 +2,9 @@
     "name": "alfonsobries/laravel-spreadsheet-importer",
     "description": "Sheetjs Laravel Spreadsheet Importer",
     "keywords": [
-        "alfonsobries",
+        "laravel",
+        "sheetjs",
+        "xlsx",
         "laravel-spreadsheet-importer"
     ],
     "homepage": "https://github.com/alfonsobries/laravel-spreadsheet-importer",

@@ -1,0 +1,54 @@
+{
+    "name": "alfonsobries/laravel-spreadsheet-importer",
+    "description": "Sheetjs Laravel Spreadsheet Importer",
+    "keywords": [
+        "alfonsobries",
+        "laravel-spreadsheet-importer"
+    ],
+    "homepage": "https://github.com/alfonsobries/laravel-spreadsheet-importer",
+    "license": "MIT",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Alfonso Bribiesca",
+            "email": "alfonso@vexilo.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^7.1",
+        "illuminate/support": "5.8.*"
+    },
+    "require-dev": {
+        "orchestra/testbench": "3.8.*",
+        "phpunit/phpunit": "^7.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Alfonsobries\\LaravelSpreadsheetImporter\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Alfonsobries\\LaravelSpreadsheetImporter\\Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit",
+        "test-coverage": "vendor/bin/phpunit --coverage-html coverage"
+
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Alfonsobries\\LaravelSpreadsheetImporter\\LaravelSpreadsheetImporterServiceProvider"
+            ],
+            "aliases": {
+                "LaravelSpreadsheetImporter": "Alfonsobries\\LaravelSpreadsheetImporter\\LaravelSpreadsheetImporterFacade"
+            }
+        }
+    }
+}

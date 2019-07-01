@@ -7,5 +7,7 @@ return [
     'file_id_column' => 'data_file_id',
     'batch_size' => 1000,
     'progress_event' => Alfonsobries\LaravelSpreadsheetImporter\Events\ImporterProgressEvent::class,
+    'finished_event' => Alfonsobries\LaravelSpreadsheetImporter\Events\ImporterProgressFinishedEvent::class,
+    'error_event' => Alfonsobries\LaravelSpreadsheetImporter\Events\ImporterProgressErrorEvent::class,
     'temporal_table_name_prefix' => 'temp_',
 ];

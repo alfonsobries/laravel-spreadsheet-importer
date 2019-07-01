@@ -3,8 +3,6 @@
 namespace Alfonsobries\LaravelSpreadsheetImporter\Listeners;
 
 use Alfonsobries\LaravelSpreadsheetImporter\Events\ImporterProgressEvent;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 
 class ImporterProgressEventListener
 {
@@ -23,29 +21,35 @@ class ImporterProgressEventListener
         $message = $event->message;
         $pid = $event->pid;
 
-        $model = $relatedClass::find($relatedId);
+        $importable = $relatedClass::find($relatedId);
         
-        $model->importable_status = $progressType;
+        $importable->importable_status = $progressType;
 
         switch ($progressType) {
             case 'error':
-                $model->importable_error_message = $message;
+                $importable->importable_error_message = $message;
                 break;
             case 'total_rows':
-                $model->importable_total_rows = $data;
+                $importable->importable_total_rows = $data;
                 break;
             case 'table_created':
-                $model->importable_table_name = $data;
+                $importable->importable_table_name = $data;
                 break;
             case 'processing':
-                $model->importable_processed = $data;
+                $importable->importable_processed = $data;
                 break;
         }
 
-        $model->save();
+        $importable->save();
 
-        if ($model->importable_status === 'finished') {
-            info("finished");
+        if ($importable->importable_status === 'finished') {
+            $event = config('laravel-spreadsheet-importer.finished_event');
+            event(new $event($importable));
+        }
+
+        if ($importable->importable_status === 'error') {
+            $event = config('laravel-spreadsheet-importer.error_event');
+            event(new $event($importable));
         }
     }
 }

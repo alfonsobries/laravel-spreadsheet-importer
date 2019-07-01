@@ -168,9 +168,21 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $listen = [
+    	// Every time the importer has some progress
         \Alfonsobries\LaravelSpreadsheetImporter\Events\ImporterProgressEvent => [
         	// Or your own event listener
             \Alfonsobries\LaravelSpreadsheetImporter\Listeners\ImporterProgressEventListener::class,
+        ],
+
+        // The `ImporterProgressEventListener` also creates the following observable events:
+        // When the import finished
+        \Alfonsobries\LaravelSpreadsheetImporter\Events\ImporterProgressFinishedEvent => [
+        	// In this case you will need to define your own event listener 
+        ],
+
+    	// When the import reports an error:
+        \Alfonsobries\LaravelSpreadsheetImporter\Events\ImporterProgressErrorEvent => [
+        	// In this case you will need to define your own event listener 
         ],
     ];
     // ...

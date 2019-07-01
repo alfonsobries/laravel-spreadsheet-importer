@@ -57,9 +57,9 @@ class MyModel extends Model implements Importable
      * @return string
      */
     public function getFileToImportPath() {
-    	// Notice that this line should be adapted to your application, this is an example for
-    	// a path that comes from a file that was stored using the spatie media library package
-    	return $this->getFirstMedia('file')->getPath();
+        // Notice that this line should be adapted to your application, this is an example for
+        // a path that comes from a file that was stored using the spatie media library package
+        return $this->getFirstMedia('file')->getPath();
     }
 
     /**
@@ -68,9 +68,9 @@ class MyModel extends Model implements Importable
      * @return string
      */
     public function getTemporalTableName() {
-    	// This is an example you should adapt this line to your own application
-    	// You should create a method that always return the same value for the same model
-    	return sprintf('file_%s', $this->id);
+        // This is an example you should adapt this line to your own application
+        // You should create a method that always return the same value for the same model
+        return sprintf('file_%s', $this->id);
     }
 ```
 
@@ -145,17 +145,17 @@ You can dispatch the job at any moment, it receive the `importable` Model as a p
 For example, you can call the job once you save your model in a `store` method in a controller (assuming that your model is associating a file and will return a valid file_path in the `getFileToImportPath()` method):
 
 ``` php 
-	public function store(Request $request, MyModel $model)
-    {
-        $model->addFile($request->file);
+public function store(Request $request, MyModel $model)
+{
+    $model->addFile($request->file);
 
-        \Alfonsobries\LaravelSpreadsheetImporter\Jobs\StartImport::dispatch($model);
+    \Alfonsobries\LaravelSpreadsheetImporter\Jobs\StartImport::dispatch($model);
 
-        // ...The rest of the code
-    }
+    // ...The rest of the code
+}
 ```
 
-That job will create and trigger the Node command, then the Node command will call the `ReportImporterProgress` artisan command every time has some progress to inform, finally the artisan command will trigger a `ImporterProgressEvent` that you can listen with your custom event listener or by adding `ImporterProgressEventListener` that comes in this package:
+That job will create and trigger the Node command, then the Node command will call the `ReportImporterProgress` artisan command every time has some progress to inform, finally the artisan command will trigger a `ImporterProgressEvent` that you can listen with your custom event listener or by adding `ImporterProgressEventListener` that comes in this package, that listener is responsible to store the progress of your import into your Model:
 
 To configure the event listener add the following lines into your `app/Providers/EventServiceProvider.php`:
 
@@ -168,21 +168,21 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $listen = [
-    	// Every time the importer has some progress
+        // Every time the importer has some progress
         \Alfonsobries\LaravelSpreadsheetImporter\Events\ImporterProgressEvent => [
-        	// Or your own event listener
+            // (Or use your own event listener)
             \Alfonsobries\LaravelSpreadsheetImporter\Listeners\ImporterProgressEventListener::class,
         ],
 
         // The `ImporterProgressEventListener` also creates the following observable events:
         // When the import finished
         \Alfonsobries\LaravelSpreadsheetImporter\Events\ImporterProgressFinishedEvent => [
-        	// In this case you will need to define your own event listener 
+            // In this case you will need to define your own event listener 
         ],
 
-    	// When the import reports an error:
+        // When the import reports an error:
         \Alfonsobries\LaravelSpreadsheetImporter\Events\ImporterProgressErrorEvent => [
-        	// In this case you will need to define your own event listener 
+            // In this case you will need to define your own event listener 
         ],
     ];
     // ...

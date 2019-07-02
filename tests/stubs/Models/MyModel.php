@@ -12,9 +12,11 @@ class MyModel extends Model implements Importable
 
     public $timestamps = false;
 
+    public $file = 'small.csv';
+
     public function getFileToImportPath()
     {
-        return __DIR__ . '/../small.csv';
+        return __DIR__ . '/../' . $this->file;
     }
 
     public function getTemporalTableName()

@@ -15,7 +15,7 @@ class StartImport
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected $model;
+    protected $importable;
     protected $async;
     protected $settings;
 
@@ -24,9 +24,9 @@ class StartImport
      *
      * @return void
      */
-    public function __construct(Importable $model, $settings = [], $async = true)
+    public function __construct(Importable $importable, $settings = [], $async = true)
     {
-        $this->model = $model;
+        $this->importable = $importable;
         $this->settings = $settings;
         $this->async = $async;
     }
@@ -38,9 +38,9 @@ class StartImport
      */
     public function handle()
     {
-        $filePath = $this->model->getFileToImportPath();
+        $filePath = $this->importable->getFileToImportPath();
 
-        $tableName = $this->model->getTemporalTableName();
+        $tableName = $this->importable->getTemporalTableName();
 
         $process = $this->buildProcess($filePath, $tableName);
 
@@ -48,29 +48,30 @@ class StartImport
             // When asyn the import will be happening 
             if ($this->async) {
                 $process->disableOutput()->start();
-                $this->model->importable_process_id = $process->getPid();
+                $this->importable->importable_process_id = $process->getPid();
                 // When testing the process id that we need is the following one
                 // in real production app the process id is updated in the artisan command
                 if (app()->environment('testing')) {
-                    $this->model->importable_node_process_id = $process->getPid() + 1;
+                    $this->importable->importable_node_process_id = $process->getPid() + 1;
                 }
             } else {
                 $process->mustRun();
-                $this->model->importable_output = $process->getOutput();
+                $this->importable->importable_output = $process->getOutput();
             }
 
-            $this->model->importable_status = 'started';
+            $this->importable->importable_status = 'started';
         } catch (ProcessFailedException $exception) {
-            $this->model->importable_process_exception = $exception->getMessage();
-            $this->model->importable_status = 'error';
+            $this->importable->importable_process_exception = $exception->getMessage();
+            $this->importable->importable_status = 'error';
         } catch (\Exception $exception) {
-            $this->model->importable_exception = $exception->getMessage();
-            $this->model->importable_status = 'error';
+            $this->importable->importable_exception = $exception->getMessage();
+            $this->importable->importable_status = 'error';
         }
 
         $tableNamePrefix = config('laravel-spreadsheet-importer.temporal_table_name_prefix');
-        $this->model->importable_table_name = $tableNamePrefix . $tableName;
-        $this->model->save();
+
+        $this->importable->importable_table_name = $tableNamePrefix . $tableName;
+        $this->importable->save();
     }
 
     private function buildProcess($filePath, $tableName)
@@ -96,13 +97,13 @@ class StartImport
             $settings['id_column'],
 
             '--relatedId',
-            $this->model->id,
+            $this->importable->id,
 
             '--relatedClass',
-            sprintf('"\\%s"', get_class($this->model)),
+            sprintf('"\\%s"', get_class($this->importable)),
 
             '--columns',
-            $settings['file_id_column'] . ':' . $this->model->id,
+            $settings['file_id_column'] . ':' . $this->importable->id,
 
             '--batchSize',
             $settings['batch_size'],

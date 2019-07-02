@@ -29,5 +29,22 @@ class StartImportTest extends TestCase
             $importable->importable_table_name
         );
     }
+
+    /** @test */
+    public function the_process_can_be_canceled()
+    {
+        $importable = MyModel::create();
+        $importable->file = 'large.xlsx';
+
+        $job = new StartImport($importable, [], true);
+
+        $job->handle();
+
+        $this->assertTrue($importable->commandScriptIsRunning());
+
+        $importable->cancel();
+        
+        $this->assertFalse($importable->nodeScriptIsRunning());
+    }
 }
 

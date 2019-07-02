@@ -41,4 +41,46 @@ trait InteractsWithImporter
 
         return parent::newRelatedInstance($class);
     }
+
+    /**
+     * If the node script is running
+     * 
+     * @return boolean
+     */
+    public function nodeScriptIsRunning()
+    {
+        return $this->importable_node_process_id && posix_kill($this->importable_node_process_id, 0);
+    }
+
+    /**
+     * If the php script is running
+     * 
+     * @return boolean
+     */
+    public function commandScriptIsRunning()
+    {
+        return $this->importable_process_id && posix_kill($this->importable_process_id, 0);
+    }
+
+    /**
+     * Cancel the process related with the import
+     *
+     * @return self
+     */
+    public function cancel()
+    {
+        if ($this->nodeScriptIsRunning()) {
+            posix_kill($this->importable_node_process_id, 9);
+        }
+
+        if ($this->commandScriptIsRunning()) {
+            posix_kill($this->importable_process_id, 9);
+        }
+        
+        $this->importable_status = 'canceled';
+        
+        $this->save();
+
+        return $this;
+    }
 }

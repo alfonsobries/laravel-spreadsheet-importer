@@ -36,5 +36,7 @@ class LaravelSpreadsheetImporterServiceProvider extends ServiceProvider
         $this->app->singleton('laravel-spreadsheet-importer', function () {
             return new LaravelSpreadsheetImporter;
         });
+
+        Event::listen('log.create', 'CompanyName/Events/LogEventsProvider@create');
     }
 }

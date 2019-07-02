@@ -2,6 +2,8 @@
 
 namespace Alfonsobries\LaravelSpreadsheetImporter\Tests;
 
+use Alfonsobries\LaravelSpreadsheetImporter\Events\ImporterProgressEvent;
+use Alfonsobries\LaravelSpreadsheetImporter\Listeners\ImporterProgressEventListener;
 use Dotenv\Dotenv;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -14,6 +16,8 @@ abstract class TestCase extends Orchestra
         parent::setUp();
 
         $this->setUpDatabase($this->app);
+        
+        $this->setUpEventListeners($this->app);
     }
 
     /**
@@ -65,5 +69,15 @@ abstract class TestCase extends Orchestra
             $table->mediumText('importable_process_exception')->nullable();
             $table->mediumText('importable_exception')->nullable();
         });
+    }
+
+    /**
+     * Set up the event listeners.
+     *
+     * @param \Illuminate\Foundation\Application $app
+     */
+    protected function setUpEventListeners($app)
+    {
+        $this->app['events']->listen(ImporterProgressEvent::class, ImporterProgressEventListener::class);
     }
 }

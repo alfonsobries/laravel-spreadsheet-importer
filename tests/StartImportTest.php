@@ -3,10 +3,7 @@
 namespace Alfonsobries\LaravelSpreadsheetImporter\Tests;
 
 use Alfonsobries\LaravelSpreadsheetImporter\Jobs\StartImport;
-use Alfonsobries\LaravelSpreadsheetImporter\LaravelSpreadsheetImporter;
 use Alfonsobries\LaravelSpreadsheetImporter\Tests\stubs\Models\MyModel;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Support\Facades\Schema;
 
 class StartImportTest extends TestCase
@@ -47,4 +44,3 @@ class StartImportTest extends TestCase
         $this->assertFalse($importable->nodeScriptIsRunning());
     }
 }
-

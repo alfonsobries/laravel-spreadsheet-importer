@@ -188,6 +188,13 @@ class EventServiceProvider extends ServiceProvider
     // ...
 ``` 
 
+## Testing
+
+For running the tests you will need to install the dependencies and have a valid testing database
+
++ Install the composer packages `composer install`
++ Because this package interacts with a database you will need to define a `.env` with a valid mysql or postgresql database data (use `env.example` as an example)
++ Also you need to install the npm dependency `npm install`
 
 ### Changelog
 

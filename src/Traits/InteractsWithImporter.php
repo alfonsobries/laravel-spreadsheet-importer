@@ -14,7 +14,7 @@ trait InteractsWithImporter
      */
     public function tempData()
     {
-        return $this->hasMany(TempData::class, config('importer.file_id_column'));
+        return $this->hasMany(TempData::class, config('laravel-spreadsheet-importer.file_id_column'));
     }
 
     /**
@@ -28,10 +28,10 @@ trait InteractsWithImporter
     {
         if ($class === TempData::class) {
             $model = new TempData;
-            
+
             // Use the table name used as a temporal table
             $model->setTable($this->importable_table_name);
-            
+
             return tap($model, function ($instance) {
                 if (! $instance->getConnectionName()) {
                     $instance->setConnection($this->connection);

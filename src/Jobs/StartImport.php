@@ -108,7 +108,7 @@ class StartImport
             $settings['batch_size'],
 
             '--artisan',
-            base_path('artisan'),
+            realpath(base_path('artisan')),
 
             '--env',
             app()->environment(),
@@ -117,7 +117,7 @@ class StartImport
 
             '--drop',
 
-            ' &',
+            '&',
         ];
 
         return new Process(implode(' ', $params));

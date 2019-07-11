@@ -3,6 +3,7 @@
 namespace Alfonsobries\LaravelSpreadsheetImporter;
 
 use Alfonsobries\LaravelSpreadsheetImporter\Console\Commands\ReportImporterProgress;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 
 class LaravelSpreadsheetImporterServiceProvider extends ServiceProvider

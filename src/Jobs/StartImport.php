@@ -80,7 +80,8 @@ class StartImport
 
         $params = [
             $settings['node_path'],
-            $settings['importer_path'],
+            base_path($settings['importer_path']),
+
             '--input',
             $filePath,
 

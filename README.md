@@ -100,6 +100,7 @@ class AddImportableColumnsToModel extends Migration
             $table->string('importable_total_rows')->nullable();
             $table->string('importable_processed')->nullable();
             $table->string('importable_status')->default('new');
+            $table->mediumText('importable_error_message')->nullable();
             $table->mediumText('importable_output')->nullable();
             $table->mediumText('importable_process_exception')->nullable();
             $table->mediumText('importable_exception')->nullable();
@@ -120,6 +121,7 @@ class AddImportableColumnsToModel extends Migration
             $table->dropColumn('importable_total_rows');
             $table->dropColumn('importable_processed');
             $table->dropColumn('importable_status');
+            $table->dropColumn('importable_error_message');
             $table->dropColumn('importable_output');
             $table->dropColumn('importable_process_exception');
             $table->dropColumn('importable_exception');

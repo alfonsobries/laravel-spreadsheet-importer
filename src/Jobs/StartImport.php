@@ -122,6 +122,8 @@ class StartImport
             '&',
         ];
 
-        return new Process(implode(' ', $params));
+        $process = implode(' ', $params);
+
+        return Process::fromShellCommandline($process);
     }
 }

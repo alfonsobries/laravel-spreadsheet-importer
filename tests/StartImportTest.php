@@ -37,10 +37,10 @@ class StartImportTest extends TestCase
 
         $job->handle();
 
-        $this->assertTrue($importable->commandScriptIsRunning());
+        $this->assertTrue($importable->nodeProcessIsRunning());
 
         $importable->cancel();
         
-        $this->assertFalse($importable->nodeScriptIsRunning());
+        $this->assertFalse($importable->nodeProcessIsRunning());
     }
 }

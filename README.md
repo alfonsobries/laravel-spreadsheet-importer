@@ -95,7 +95,6 @@ class AddImportableColumnsToModel extends Migration
     {
         Schema::table('my_model_table', function (Blueprint $table) {
             $table->string('importable_process_id')->nullable();
-            $table->string('importable_node_process_id')->nullable();
             $table->string('importable_table_name')->nullable();
             $table->string('importable_total_rows')->nullable();
             $table->string('importable_processed')->nullable();
@@ -114,7 +113,6 @@ class AddImportableColumnsToModel extends Migration
     {
         Schema::table('my_model_table', function (Blueprint $table) {
             $table->dropColumn('importable_process_id');
-            $table->dropColumn('importable_node_process_id');
             $table->dropColumn('importable_table_name');
             $table->dropColumn('importable_total_rows');
             $table->dropColumn('importable_processed');

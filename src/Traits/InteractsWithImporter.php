@@ -43,23 +43,25 @@ trait InteractsWithImporter
     }
 
     /**
-     * If the node script is running
-     * 
-     * @return boolean
-     */
-    public function nodeScriptIsRunning()
-    {
-        return $this->importable_node_process_id && posix_kill($this->importable_node_process_id, 0);
-    }
-
-    /**
      * If the php script is running
      * 
      * @return boolean
      */
-    public function commandScriptIsRunning()
+    public function nodeProcessIsRunning()
     {
-        return $this->importable_process_id && posix_kill($this->importable_process_id, 0);
+        if (! $this->importable_process_id) {
+            return false;
+        }
+
+        if (app()->environment('testing')) {
+            // When testing the process doesnt disapear but has process state code of `R` (running
+            // or runnable (on run queue)). This condition may work even when no testing but in my
+            // tests seems like an unnecesary extra condition that can cause troubles in production
+            return posix_kill($this->importable_process_id, 0)
+                && trim(shell_exec("ps aux | grep 'node' | grep '" . $this->importable_process_id . "' | grep -v 'ps aux' | awk '{print $8}'")) === 'R+';
+        }
+
+        return posix_kill($this->importable_process_id, 0);
     }
 
     /**
@@ -69,11 +71,7 @@ trait InteractsWithImporter
      */
     public function cancel()
     {
-        if ($this->nodeScriptIsRunning()) {
-            posix_kill($this->importable_node_process_id, 9);
-        }
-
-        if ($this->commandScriptIsRunning()) {
+        if ($this->nodeProcessIsRunning()) {
             posix_kill($this->importable_process_id, 9);
         }
         

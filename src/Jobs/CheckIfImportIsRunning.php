@@ -3,31 +3,29 @@
 namespace Alfonsobries\LaravelSpreadsheetImporter\Jobs;
 
 use Alfonsobries\LaravelSpreadsheetImporter\Contracts\Importable;
+use Alfonsobries\LaravelSpreadsheetImporter\Jobs\CheckIfImportIsRunning;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Symfony\Component\Process\Exception\ProcessFailedException;
-use Symfony\Component\Process\Process;
 
 class CheckIfImportIsRunning implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected $importable;
-    protected $process;
-
+    protected $logError;
+    
     /**
      * Create a new job instance.
      * @param \Alfonsobries\LaravelSpreadsheetImporter\Contracts\Importable  $importable
-     * @param \Symfony\Component\Process\Process  $process
      * @return void
      */
-    public function __construct(Importable $importable, Process $process)
+    public function __construct(Importable $importable, $logError = false)
     {
         $this->importable = $importable;
-        $this->process = $process;
+        $this->logError = $logError;
     }
 
     /**
@@ -38,19 +36,32 @@ class CheckIfImportIsRunning implements ShouldQueue
     public function handle()
     {
         // If the process is finished we are ok
-        if ($this->importable->importable_status === 'success' || $this->importable->importable_status === 'error') {
-            return;
-        }
-
-        // All ok try again in a moment
-        if ($this->process->isRunning()) {
+        if (!in_array($this->importable->importable_status, ['success', 'error'])) {
             $seconds = config('laravel-spreadsheet-importer.secs_for_check_if_node_process_still_running');
-            CheckIfImportIsRunning::dispatchNow($this->importable, $this->process)
-                ->delay(now()->addSeconds($seconds));
-        } else {
-            $this->importable->importable_feedback = 'Process stoped';
-            $this->importable->importable_status = 'error';
-            $this->importable->save();
+
+
+            // All ok try again in a moment
+            if ($this->importable->nodeProcessIsRunning()) {
+                CheckIfImportIsRunning::dispatch($this->importable)
+                    ->delay(now()->addSeconds($seconds));
+            } else if (! $this->logError) {
+                // If the process is not running dispatch this job again, just to be sure that the 
+                // status is not being changed at this moment, the flag ensures the next time the 
+                // log added to the importable status
+                CheckIfImportIsRunning::dispatch($this->importable, true)
+                    ->delay(now()->addSeconds($seconds));
+            } else {
+                // Send the error to the progress handler
+                $event = config('laravel-spreadsheet-importer.progress_event');
+                event(new $event(
+                    get_class($this->importable), // relatedClass
+                    $this->importable->id, // relatedId
+                    'error', // progressType
+                    null, // data
+                    'Process stopped', //
+                    $this->importable->importable_process_id // processId
+                ));
+            }
         }
     }
 }

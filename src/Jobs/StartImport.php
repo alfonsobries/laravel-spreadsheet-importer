@@ -3,6 +3,7 @@
 namespace Alfonsobries\LaravelSpreadsheetImporter\Jobs;
 
 use Alfonsobries\LaravelSpreadsheetImporter\Contracts\Importable;
+use Alfonsobries\LaravelSpreadsheetImporter\Jobs\CheckIfImportIsRunning;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -51,12 +52,8 @@ class StartImport implements ShouldQueue
             // When asyn the import will be happening 
             if ($this->async) {
                 $process->disableOutput()->start();
-                $this->importable->importable_process_id = $process->getPid();
-                // When testing the process id that we need is the following one
-                // in real production app the process id is updated in the artisan command
-                if (app()->environment('testing')) {
-                    $this->importable->importable_node_process_id = $process->getPid() + 1;
-                }
+
+                $this->importable->importable_process_id = $this->getNodeCommandProcessId($process);
             } else {
                 $process->mustRun();
                 $this->importable->importable_output = $process->getOutput();
@@ -77,10 +74,27 @@ class StartImport implements ShouldQueue
         $this->importable->save();
 
         $seconds = config('laravel-spreadsheet-importer.secs_for_check_if_node_process_still_running');
-        if ($seconds) {
-            CheckIfImportIsRunning::dispatchNow($this->importable, $process)
+        if ($seconds && config('queue.default') !== 'sync') {
+            CheckIfImportIsRunning::dispatch($this->importable)
                 ->delay(now()->addSeconds($seconds));
         }
+    }
+
+    /**
+     * Apparently the symfony library is creating two process the first to start the command and the
+     * second is the real job, we care about the second PID.
+     * 
+     * @return Number
+     */
+    private function getNodeCommandProcessId(Process $process)
+    {
+        // When testing the PID works differently, thw following command looks for the process
+        // id using the description of the command
+        if (app()->environment('testing')) {
+            return intval(trim(shell_exec("ps aux | grep 'node' | grep 'laravel-spreadsheet-importer' | grep -v 'ps aux' | awk '{print $2}'")));
+        }
+
+        return $process->getPid() + 1;
     }
 
     private function buildProcess($filePath, $tableName)

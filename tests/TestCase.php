@@ -60,7 +60,6 @@ abstract class TestCase extends Orchestra
         Schema::create('my_models', function (Blueprint $table) {
             $table->increments('id');
             $table->string('importable_process_id')->nullable();
-            $table->string('importable_node_process_id')->nullable();
             $table->string('importable_table_name')->nullable();
             $table->string('importable_total_rows')->nullable();
             $table->string('importable_processed')->nullable();

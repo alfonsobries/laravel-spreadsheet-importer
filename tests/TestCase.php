@@ -66,8 +66,7 @@ abstract class TestCase extends Orchestra
             $table->string('importable_processed')->nullable();
             $table->string('importable_status')->default('new');
             $table->mediumText('importable_output')->nullable();
-            $table->mediumText('importable_process_exception')->nullable();
-            $table->mediumText('importable_exception')->nullable();
+            $table->mediumText('importable_feedback')->nullable();
         });
     }
 

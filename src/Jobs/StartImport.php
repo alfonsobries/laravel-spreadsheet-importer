@@ -61,10 +61,10 @@ class StartImport implements ShouldQueue
 
             $this->importable->importable_status = 'started';
         } catch (ProcessFailedException $exception) {
-            $this->importable->importable_process_exception = $exception->getMessage();
+            $this->importable->importable_feedback = $exception->getMessage();
             $this->importable->importable_status = 'error';
         } catch (\Exception $exception) {
-            $this->importable->importable_exception = $exception->getMessage();
+            $this->importable->importable_feedback = $exception->getMessage();
             $this->importable->importable_status = 'error';
         }
 

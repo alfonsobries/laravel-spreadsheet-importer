@@ -47,7 +47,7 @@ class HandleProgress implements ShouldQueue
 
         switch ($this->progressType) {
             case 'error':
-                $importable->importable_error_message = $this->message;
+                $importable->importable_feedback = $this->message;
                 break;
             case 'total_rows':
                 $importable->importable_total_rows = $this->data;

@@ -43,6 +43,15 @@ trait InteractsWithImporter
     }
 
     /**
+     * The import process is marked as finished
+     * @return Boolean
+     */
+    public function importProcessFinished()
+    {
+        return in_array($this->importable_status, ['success', 'error', 'canceled']);
+    }
+
+    /**
      * If the php script is running
      * 
      * @return boolean

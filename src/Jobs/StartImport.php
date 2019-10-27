@@ -118,8 +118,6 @@ class StartImport implements ShouldQueue
             '--create',
 
             '--drop',
-
-            '&',
         ];
 
         $process = implode(' ', $params);

@@ -10,4 +10,5 @@ return [
     'finished_event' => Alfonsobries\LaravelSpreadsheetImporter\Events\ImporterProgressFinishedEvent::class,
     'error_event' => Alfonsobries\LaravelSpreadsheetImporter\Events\ImporterProgressErrorEvent::class,
     'temporal_table_name_prefix' => 'temp_',
+    'secs_for_check_if_node_process_still_running' => 30,
 ];

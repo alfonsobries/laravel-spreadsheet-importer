@@ -22,6 +22,9 @@ class StartImport implements ShouldQueue
     /**
      * Create a new job instance.
      *
+     * @param \Alfonsobries\LaravelSpreadsheetImporter\Contracts\Importable  $importable
+     * @param array $settings
+     * @param boolean $async
      * @return void
      */
     public function __construct(Importable $importable, $settings = [], $async = true)
@@ -72,6 +75,12 @@ class StartImport implements ShouldQueue
 
         $this->importable->importable_table_name = $tableNamePrefix . $tableName;
         $this->importable->save();
+
+        $seconds = config('laravel-spreadsheet-importer.secs_for_check_if_node_process_still_running');
+        if ($seconds) {
+            CheckIfImportIsRunning::dispatchNow($this->importable, $process)
+                ->delay(now()->addSeconds($seconds));
+        }
     }
 
     private function buildProcess($filePath, $tableName)

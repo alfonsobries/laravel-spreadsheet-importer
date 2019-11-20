@@ -48,7 +48,7 @@ trait InteractsWithImporter
      */
     public function importProcessFinished()
     {
-        return in_array($this->importable_status, ['success', 'error', 'canceled']);
+        return in_array($this->importable_status, TempData::finishedStatuses());
     }
 
     /**
@@ -84,7 +84,7 @@ trait InteractsWithImporter
             posix_kill($this->importable_process_id, 9);
         }
         
-        $this->importable_status = 'canceled';
+        $this->importable_status = TempData::STATUS_CANCELED;
         
         $this->save();
 

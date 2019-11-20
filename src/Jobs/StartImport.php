@@ -4,6 +4,7 @@ namespace Alfonsobries\LaravelSpreadsheetImporter\Jobs;
 
 use Alfonsobries\LaravelSpreadsheetImporter\Contracts\Importable;
 use Alfonsobries\LaravelSpreadsheetImporter\Jobs\CheckIfImportIsRunning;
+use Alfonsobries\LaravelSpreadsheetImporter\Models\TempData;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -59,13 +60,13 @@ class StartImport implements ShouldQueue
                 $this->importable->importable_output = $process->getOutput();
             }
 
-            $this->importable->importable_status = 'started';
+            $this->importable->importable_status = TempData::STATUS_STARTED;
         } catch (ProcessFailedException $exception) {
             $this->importable->importable_feedback = $exception->getMessage();
-            $this->importable->importable_status = 'error';
+            $this->importable->importable_status = TempData::STATUS_ERROR;
         } catch (\Exception $exception) {
             $this->importable->importable_feedback = $exception->getMessage();
-            $this->importable->importable_status = 'error';
+            $this->importable->importable_status = TempData::STATUS_ERROR;
         }
 
         $tableNamePrefix = config('laravel-spreadsheet-importer.temporal_table_name_prefix');

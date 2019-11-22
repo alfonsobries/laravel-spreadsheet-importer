@@ -10,7 +10,6 @@ class TempData extends Model
     const STATUS_ERROR = 'error';
     const STATUS_CANCELED = 'canceled';
     const STATUS_STARTED = 'started';
-    const STATUS_ERROR = 'error';
 
     public $timestamps = false;
     protected $guarded = [];

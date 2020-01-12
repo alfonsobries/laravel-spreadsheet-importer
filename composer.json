@@ -18,13 +18,13 @@
         }
     ],
     "require": {
-        "php": "^7.1",
-        "illuminate/support": "5.8.*",
+        "php": "^7.2",
+        "illuminate/support": "^6.0",
         "symfony/process": "^4.3"
     },
     "require-dev": {
-        "orchestra/testbench": "3.8.*",
-        "phpunit/phpunit": "^7.0",
+        "orchestra/testbench": "^4.0",
+        "phpunit/phpunit": "^8.0",
         "vlucas/phpdotenv": "^3.4"
     },
     "autoload": {

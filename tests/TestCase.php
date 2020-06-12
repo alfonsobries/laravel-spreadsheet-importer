@@ -16,7 +16,7 @@ abstract class TestCase extends Orchestra
         parent::setUp();
 
         $this->setUpDatabase($this->app);
-        
+
         $this->setUpEventListeners($this->app);
     }
 
@@ -27,9 +27,9 @@ abstract class TestCase extends Orchestra
      */
     protected function getEnvironmentSetUp($app)
     {
-        $dotenv = Dotenv::create(__DIR__.'/../');
+        $dotenv = Dotenv::createImmutable(__DIR__.'/../');
         $dotenv->load();
-        
+
         $app['config']->set('database.default', 'pgsql');
         $app['config']->set('database.connections.pgsql', [
             'driver' => 'pgsql',
